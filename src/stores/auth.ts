@@ -17,6 +17,7 @@ export const useAuthStore = defineStore('auth', () => {
         password,
       })
       if (authError) throw authError
+      if (!authData.user) throw new Error('Error al iniciar sesión')
 
       const { data: emp, error: empError } = await supabase
         .from('employees')
@@ -37,14 +38,18 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function checkSession() {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (session?.user) {
-      const { data: emp } = await supabase
-        .from('employees')
-        .select('*')
-        .eq('id', session.user.id)
-        .single()
-      if (emp) employee.value = emp
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
+        const { data: emp } = await supabase
+          .from('employees')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+        if (emp) employee.value = emp
+      }
+    } catch {
+      employee.value = null
     }
   }
 
