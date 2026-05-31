@@ -5,7 +5,7 @@ import { useAuthStore } from '../stores/auth'
 import {
   LayoutDashboard, Package, ShoppingCart, BarChart3, Settings, LogOut,
   ClipboardList, PlusCircle, PackageCheck, AlertTriangle, History, DollarSign,
-  Tags, Users, Menu, X, FileText, CalendarRange
+  Tags, Users, Menu, X, FileText, CalendarRange, Coins, TrendingUp, Archive
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -21,6 +21,13 @@ const navItems = [
       { path: '/almacen/nuevo', label: 'Nuevo Producto', icon: PlusCircle },
       { path: '/almacen/recibir', label: 'Recibir Stock', icon: PackageCheck },
       { path: '/almacen/danados', label: 'P. Dañados', icon: AlertTriangle },
+    ]
+  },
+  {
+    label: 'Caja', icon: Coins, children: [
+      { path: '/caja/actual', label: 'Abrir / Cerrar', icon: Archive },
+      { path: '/caja/movimientos', label: 'Movimientos', icon: TrendingUp },
+      { path: '/caja/historial', label: 'Historial', icon: History },
     ]
   },
   {

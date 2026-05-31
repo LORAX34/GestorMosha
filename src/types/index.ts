@@ -36,6 +36,16 @@ export interface Database {
         Insert: Omit<SaleItem, 'id'>
         Update: Partial<Omit<SaleItem, 'id'>>
       }
+      caja_sessions: {
+        Row: CajaSession
+        Insert: Omit<CajaSession, 'id' | 'opened_at' | 'closed_at' | 'expected_cash' | 'actual_cash' | 'difference'>
+        Update: Partial<Omit<CajaSession, 'id'>>
+      }
+      caja_movements: {
+        Row: CajaMovement
+        Insert: Omit<CajaMovement, 'id' | 'created_at'>
+        Update: Partial<Omit<CajaMovement, 'id'>>
+      }
     }
   }
 }
@@ -103,4 +113,28 @@ export interface SaleItem {
   quantity: number
   price: number
   subtotal: number
+}
+
+export interface CajaSession {
+  id: string
+  employee_open_id: string
+  employee_close_id: string | null
+  opened_at: string
+  closed_at: string | null
+  initial_cash: number
+  expected_cash: number | null
+  actual_cash: number | null
+  difference: number | null
+  status: 'open' | 'closed'
+  notes: string | null
+}
+
+export interface CajaMovement {
+  id: string
+  session_id: string
+  type: 'in' | 'out'
+  concept: string
+  amount: number
+  employee_id: string
+  created_at: string
 }

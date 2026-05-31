@@ -1,5 +1,5 @@
 -- =====================================================
--- SEED: Crear usuario admin, categorías y productos
+-- SEED: Crear usuario admin y categorías base
 -- Ejecutar esto en el SQL Editor de Supabase
 -- =====================================================
 
@@ -30,28 +30,11 @@ UPDATE employees
 SET name = 'Mosha', role = 'admin'
 WHERE email = 'mosha@seed.com';
 
--- 3. Crear categorías
+-- 3. Crear categorías base
 INSERT INTO categories (name, description) VALUES
   ('Limpieza', 'Productos de limpieza y cuidado personal'),
   ('Cigarrillos', 'Productos de cigarrería');
 
--- 4. Crear productos
-DO $$
-DECLARE
-  limpieza_id UUID;
-  cigarro_id UUID;
-BEGIN
-  SELECT id INTO limpieza_id FROM categories WHERE name = 'Limpieza' LIMIT 1;
-  SELECT id INTO cigarro_id FROM categories WHERE name = 'Cigarrillos' LIMIT 1;
-
-  INSERT INTO products (name, barcode, price, cost, category_id, stock, min_stock) VALUES
-    ('Detergente en Polvo 250g', '', 350, 275, limpieza_id, 0, 10),
-    ('Detergente Líquido 500ml', '', 480, 380, limpieza_id, 0, 10),
-    ('Jabón de Baño 70g', '', 220, 160, limpieza_id, 0, 20),
-    ('Rueda de Cigarro Popular Azul', '', 3800, 3300, cigarro_id, 0, 5);
-END $$;
-
--- 5. Verificar
+-- 4. Verificar
 SELECT 'Usuario:' as tipo, id, email, name, role FROM employees WHERE email = 'mosha@seed.com';
 SELECT 'Categorías:' as tipo, name FROM categories;
-SELECT 'Productos:' as tipo, name, cost, price FROM products;

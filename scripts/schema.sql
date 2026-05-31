@@ -160,3 +160,44 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE OR REPLACE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- ============================================
+-- CAJA (módulo de gestión de caja)
+-- ============================================
+
+CREATE TABLE caja_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  employee_open_id UUID NOT NULL REFERENCES employees(id),
+  employee_close_id UUID REFERENCES employees(id),
+  opened_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  closed_at TIMESTAMPTZ,
+  initial_cash DECIMAL(12,2) NOT NULL DEFAULT 0,
+  expected_cash DECIMAL(12,2),
+  actual_cash DECIMAL(12,2),
+  difference DECIMAL(12,2),
+  status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'closed')),
+  notes TEXT
+);
+
+ALTER TABLE caja_sessions ENABLE ROW LEVEL SECURITY;
+
+CREATE TABLE caja_movements (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  session_id UUID NOT NULL REFERENCES caja_sessions(id) ON DELETE CASCADE,
+  type TEXT NOT NULL CHECK (type IN ('in', 'out')),
+  concept TEXT NOT NULL,
+  amount DECIMAL(12,2) NOT NULL,
+  employee_id UUID REFERENCES employees(id),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE caja_movements ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated can read caja_sessions" ON caja_sessions FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated can insert caja_sessions" ON caja_sessions FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "Authenticated can update caja_sessions" ON caja_sessions FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "Authenticated can delete caja_sessions" ON caja_sessions FOR DELETE TO authenticated USING (true);
+
+CREATE POLICY "Authenticated can read caja_movements" ON caja_movements FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated can insert caja_movements" ON caja_movements FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "Authenticated can delete caja_movements" ON caja_movements FOR DELETE TO authenticated USING (true);
