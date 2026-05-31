@@ -52,6 +52,6 @@ BEGIN
 END $$;
 
 -- 5. Verificar
-SELECT 'Usuario:' as tipo, id, email, name, role FROM employees WHERE email = 'mosha@email.com';
+SELECT 'Usuario:' as tipo, id, email, name, role FROM employees WHERE email = 'mosha@seed.com';
 SELECT 'Categorías:' as tipo, name FROM categories;
 SELECT 'Productos:' as tipo, name, cost, price FROM products;

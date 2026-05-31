@@ -23,9 +23,14 @@ export const useAuthStore = defineStore('auth', () => {
         .from('employees')
         .select('*')
         .eq('id', authData.user.id)
-        .single()
+        .maybeSingle()
 
-      if (empError) throw empError
+      if (empError) {
+        throw new Error(`Error BD: ${empError.code} ${empError.message}`)
+      }
+      if (!emp) {
+        throw new Error('Tu usuario no tiene perfil de empleado')
+      }
       employee.value = emp
     } finally {
       loading.value = false
@@ -45,7 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
           .from('employees')
           .select('*')
           .eq('id', session.user.id)
-          .single()
+          .maybeSingle()
         if (emp) employee.value = emp
       }
     } catch {
